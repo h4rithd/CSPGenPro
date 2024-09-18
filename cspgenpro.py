@@ -15,7 +15,7 @@ visited_urls = set()
 external_domains = set()
 
 # List of image extensions to exclude
-excluded_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.tiff', '.ico']
+excluded_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.tiff', '.ico', '.pdf']
 
 # Banner
 def print_banner():
