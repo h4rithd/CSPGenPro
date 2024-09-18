@@ -14,6 +14,9 @@ warnings.filterwarnings('ignore', category=XMLParsedAsHTMLWarning)
 visited_urls = set()
 external_domains = set()
 
+# List of image extensions to exclude
+excluded_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.webp', '.tiff', '.ico']
+
 # Banner
 def print_banner():
     banner = """
@@ -37,6 +40,10 @@ def is_external(url, base_domain):
     parsed_url = urlparse(url)
     return parsed_url.netloc and parsed_url.netloc != base_domain
 
+# Function to check if the URL points to an image file
+def is_image_file(url):
+    return any(url.lower().endswith(ext) for ext in excluded_extensions)
+
 # Function to crawl and collect external domains
 def collect_external_domains(base_url, max_depth, timeout, output_file):
     def crawl(url, depth):
@@ -45,8 +52,8 @@ def collect_external_domains(base_url, max_depth, timeout, output_file):
 
         visited_urls.add(url)
 
-        # Skip mailto: links and data: URIs
-        if url.startswith('mailto:') or url.startswith('data:'):
+        # Skip mailto: links, data: URIs, and image files
+        if url.startswith('mailto:') or url.startswith('data:') or is_image_file(url):
             return
 
         try:
@@ -62,8 +69,8 @@ def collect_external_domains(base_url, max_depth, timeout, output_file):
 
         print(f"[+] Depth {depth}: Fetched {url}")
 
-        # Find all links, images, scripts, etc.
-        tags = soup.find_all(['a', 'link', 'script', 'img', 'iframe'])
+        # Find all links, scripts, etc. (excluding images)
+        tags = soup.find_all(['a', 'link', 'script', 'iframe'])
         for tag in tags:
             src_or_href = tag.get('href') or tag.get('src')
             if src_or_href:
